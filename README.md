@@ -30,16 +30,23 @@ A lightweight, secure, and scalable Personal Finance MVP built with Next.js and 
 * npm or yarn
 * Git
 * Supabase account (free tier)
+* Supabase CLI installed and authenticated (run `supabase login` after installation)
 
 ---
 
 ## Project Setup
 
+0. Install and authenticate Supabase CLI
+
+   ```bash
+   supabase login
+   ```
+
 1. Clone the repo
 
    ```bash
-   git clone git@gitlab.com:<your-username>/wealth-manager-web.git
-   cd wealth-manager-web
+   git clone git@gitlab.com:<your-username>/wealth-manager.git
+   cd wealth-manager
    ```
 
 2. Install dependencies
@@ -52,7 +59,7 @@ A lightweight, secure, and scalable Personal Finance MVP built with Next.js and 
 
 3. Configure environment variables
 
-   * Create a file named `.env.local` in the project root
+   * Create a file named `.env` in the project root
    * Add the following keys:
 
      ```ini
@@ -60,7 +67,7 @@ A lightweight, secure, and scalable Personal Finance MVP built with Next.js and 
      NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
      SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
      ```
-   * Do not commit `.env.local`; it is included in `.gitignore`.
+   * Do not commit `.env`; it is included in `.gitignore`.
 
 4. Start the development server
 

@@ -1,36 +1,36 @@
 // pages/index.tsx
-import { supabase } from '../lib/supabaseClient'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabaseClient';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [message, setMessage] = useState('')
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        router.replace('/dashboard')
+        router.replace('/dashboard');
       }
-    })
-  }, [])
+    });
+  }, []);
 
   const handleEmailSignIn = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      setMessage(error.message)
+      setMessage(error.message);
     } else {
       // on success, immediately navigate to dashboard
-      router.replace('/dashboard')
+      router.replace('/dashboard');
     }
-  }
+  };
 
   const handleGoogle = () =>
-    supabase.auth.signInWithOAuth({ provider: 'google' }).then(() => router.replace('/dashboard'))
+    supabase.auth.signInWithOAuth({ provider: 'google' }).then(() => router.replace('/dashboard'));
   const handleApple = () =>
-    supabase.auth.signInWithOAuth({ provider: 'apple' }).then(() => router.replace('/dashboard'))
+    supabase.auth.signInWithOAuth({ provider: 'apple' }).then(() => router.replace('/dashboard'));
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 overflow-auto bg-gradient-to-br from-primary via-accent to-purple-800">
@@ -55,7 +55,9 @@ export default function Home() {
             Continue with Apple ID
           </button>
 
-          <div className="text-center text-sm text-gray-500 uppercase mb-6">or sign in with email</div>
+          <div className="text-center text-sm text-gray-500 uppercase mb-6">
+            or sign in with email
+          </div>
 
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             E-mail
@@ -104,7 +106,9 @@ export default function Home() {
 
         {/* Right Panel */}
         <div className="bg-green-100 rounded-3xl p-8">
-          <h3 className="text-xl font-semibold mb-4">Talk, track, and grow your money, all on Wealth Manager.</h3>
+          <h3 className="text-xl font-semibold mb-4">
+            Talk, track, and grow your money, all on Wealth Manager.
+          </h3>
           <ul className="space-y-3 text-gray-700">
             <li>✔️ Access spending and budgeting tools</li>
             <li>✔️ Track your net worth, portfolio, equity, and credit score</li>
@@ -117,5 +121,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }

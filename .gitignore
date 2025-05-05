@@ -1,44 +1,51 @@
-# Dependency directories
+# dependencies
+/node_modules/
 
-node\_modules/
-.pnp/
-.pnp.js
+# next.js build output
+/.next/
+/out/
 
-# Next.js build output
+# production
+/build/
 
-.next/
-out/
+# local env files (local overrides, secrets)
+/.env.local
+/.env.*.local
+.env.*      # if you ever check in a generic .env, ignore it now
+.env
 
-# Production
-
-build/
-dist/
-
-# Environment variables
-
-.env 
-.env.\*.local
-
-# Logs
-
-npm-debug.log\*
-yarn-debug.log\*
-pnpm-debug.log\*
-
-# IDEs and editors
-
-.vscode/
-.idea/
+# logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+logs/
+*.log
 
 # OS files
-
-.DS\_Store
+.DS_Store
 Thumbs.db
 
-# Test coverage
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
+# Test coverage
 coverage/
 
-# Misc
+# type‑script
+*.tsbuildinfo
 
-\*.log
+# lockfiles (if you switch between npm/yarn/pnpm)
+/package-lock.json
+/yarn.lock
+.pnpm-lock.yaml
+
+# Mac thumbnail cache
+._*
+
+# Optional: VSCode workspace settings
+*.code-workspace

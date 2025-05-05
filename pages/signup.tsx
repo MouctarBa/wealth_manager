@@ -30,21 +30,25 @@ export default function Signup() {
       <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Create Your Account</h2>
 
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">E-mail</label>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          E-mail
+        </label>
         <input
           id="email"
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           className="mt-1 block w-full border rounded-md p-2 mb-4"
         />
 
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          Password
+        </label>
         <input
           id="password"
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           className="mt-1 block w-full border rounded-md p-2 mb-4"
         />
 
@@ -58,9 +62,12 @@ export default function Signup() {
         {message && <p className="mt-4 text-center text-sm text-gray-600">{message}</p>}
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account? <a href="/" className="text-blue-600 hover:underline">Sign In</a>
+          Already have an account?{' '}
+          <a href="/" className="text-blue-600 hover:underline">
+            Sign In
+          </a>
         </p>
       </div>
     </div>
-  )
+  );
 }

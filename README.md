@@ -6,31 +6,31 @@ A lightweight, secure, and scalable Personal Finance MVP built with Next.js and 
 
 ## Features
 
-* User Authentication: Magic-link login with Supabase Auth
-* CSV Transaction Import: Parse and upload transaction data via CSV
-* Supabase Backend: Stores users and transactions in PostgreSQL
-* Modular Structure: Ready for budget views, charts, and AI insights
+- User Authentication: Magic-link login with Supabase Auth
+- CSV Transaction Import: Parse and upload transaction data via CSV
+- Supabase Backend: Stores users and transactions in PostgreSQL
+- Modular Structure: Ready for budget views, charts, and AI insights
 
 ---
 
 ## Tech Stack
 
-* Frontend: Next.js (React) with TypeScript
-* Styling: Tailwind CSS (optional)
-* Backend: Supabase (PostgreSQL + Auth)
-* CSV Parsing: PapaParse
-* Hosting: Vercel / Netlify / Custom GitLab CI
+- Frontend: Next.js (React) with TypeScript
+- Styling: Tailwind CSS (optional)
+- Backend: Supabase (PostgreSQL + Auth)
+- CSV Parsing: PapaParse
+- Hosting: Vercel / Netlify / Custom GitLab CI
 
 ---
 
 ## Prerequisites
 
-* Windows 11 / macOS / Linux
-* Node.js v16+ (v18 LTS recommended)
-* npm or yarn
-* Git
-* Supabase account (free tier)
-* Supabase CLI installed and authenticated (run `supabase login` after installation)
+- Windows 11 / macOS / Linux
+- Node.js v16+ (v18 LTS recommended)
+- npm or yarn
+- Git
+- Supabase account (free tier)
+- Supabase CLI installed and authenticated (run `supabase login` after installation)
 
 ---
 
@@ -59,15 +59,16 @@ A lightweight, secure, and scalable Personal Finance MVP built with Next.js and 
 
 3. Configure environment variables
 
-   * Create a file named `.env` in the project root
-   * Add the following keys:
+   - Create a file named `.env` in the project root
+   - Add the following keys:
 
      ```ini
      NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
      NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
      SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
      ```
-   * Do not commit `.env`; it is included in `.gitignore`.
+
+   - Do not commit `.env`; it is included in `.gitignore`.
 
 4. Start the development server
 
@@ -104,18 +105,18 @@ wealth-manager-web/
 
 ## Available Scripts
 
-* `npm run dev` - Run app in development mode
-* `npm run build` - Build production bundle
-* `npm start` - Start the production server
-* `npm run lint` - Run ESLint
+- `npm run dev` - Run app in development mode
+- `npm run build` - Build production bundle
+- `npm start` - Start the production server
+- `npm run lint` - Run ESLint
 
 ---
 
 ## Deployment
 
-* Vercel: Connect your GitLab repo, and it auto-deploys on push.
-* Netlify: Configure build command `npm run build` and publish directory `out`.
-* Custom: Use GitLab CI/CD or Docker for self-hosted deployments.
+- Vercel: Connect your GitLab repo, and it auto-deploys on push.
+- Netlify: Configure build command `npm run build` and publish directory `out`.
+- Custom: Use GitLab CI/CD or Docker for self-hosted deployments.
 
 ---
 
@@ -141,6 +142,6 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 
 ## Acknowledgements
 
-* Next.js Documentation: [https://nextjs.org/docs](https://nextjs.org/docs)
-* Supabase Documentation: [https://supabase.com/docs](https://supabase.com/docs)
-* PapaParse: [https://www.papaparse.com](https://www.papaparse.com)
+- Next.js Documentation: [https://nextjs.org/docs](https://nextjs.org/docs)
+- Supabase Documentation: [https://supabase.com/docs](https://supabase.com/docs)
+- PapaParse: [https://www.papaparse.com](https://www.papaparse.com)

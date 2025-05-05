@@ -1,21 +1,21 @@
-import { supabase } from '../lib/supabaseClient'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import Layout from '../components/Layout'
-import Card from '../components/Card'
+import { supabase } from '../lib/supabaseClient';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import Layout from '../components/Layout';
+import Card from '../components/Card';
 
 export default function Portfolio() {
-  const router = useRouter()
-  const [user, setUser] = useState<any>(null)
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) router.replace('/')
-      else setUser(data.session.user)
-    })
-  }, [])
+      if (!data.session) router.replace('/');
+      else setUser(data.session.user);
+    });
+  }, []);
 
-  if (!user) return null
+  if (!user) return null;
 
   return (
     <Layout>
@@ -33,5 +33,5 @@ export default function Portfolio() {
         </div>
       </Card>
     </Layout>
-  )
+  );
 }

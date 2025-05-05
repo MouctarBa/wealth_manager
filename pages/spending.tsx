@@ -1,39 +1,66 @@
 // pages/spending.tsx
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabaseClient'
-import Layout from '../components/Layout'
-import Card from '../components/Card'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { supabase } from '../lib/supabaseClient';
+import Layout from '../components/Layout';
+import Card from '../components/Card';
+import MyPieChart from '../components/charts/PieChart';
 
 export default function Spending() {
-  const router = useRouter()
+  const router = useRouter();
 
   // ─── Hooks ────────────────────────────────────────────────────────────────
-  const [user, setUser] = useState<any>(null)
-  const tabs = ['Overview', 'Breakdown', 'Recurring', 'Transactions']
-  const [activeTab, setActiveTab] = useState<string>('Overview')
+  const [user, setUser] = useState<any>(null);
+  const tabs = ['Overview', 'Breakdown', 'Recurring', 'Transactions'];
+  const [activeTab, setActiveTab] = useState<string>('Overview');
+
+  // New sub‑view state for the Breakdown card
+  const [breakdownView, setBreakdownView] = useState<'expenses' | 'budget'>('expenses');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (!data.session) {
-        router.replace('/')
+        router.replace('/');
       } else {
-        setUser(data.session.user)
+        setUser(data.session.user);
       }
-    })
-  }, [router])
+    });
+  }, [router]);
 
   // ─── Early return until we know who’s signed in ────────────────────────────
-  if (!user) return null
+  if (!user) return null;
+
+  // ─── Mock data for charts & budget table ─────────────────────────────────
+  const netCashFlowData = [
+    { name: 'Dec 2023', income: 4435, expenses: 2000 },
+    { name: 'Jan 2024', income: 3800, expenses: 2200 },
+    { name: 'Feb 2024', income: 4200, expenses: 1800 },
+  ];
+
+  const expensesByCategory = [
+    { name: 'Auto & transport', value: 250 },
+    { name: 'Household', value: 250 },
+    { name: 'Drinks & dining', value: 250 },
+    { name: 'Travel & vacation', value: 250 },
+    { name: 'Childcare & education', value: 250 },
+  ];
+
+  const budgetData = expensesByCategory.map((e) => ({
+    id: e.name,
+    name: e.name,
+    planned: 300,
+    spent: e.value,
+    remaining: 300 - e.value,
+  }));
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
-    <Layout>
+    <Layout active="Spending">
       {/* Header & Tabs */}
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6">
         <h2 className="text-3xl font-semibold mb-4 lg:mb-0">Spending</h2>
         <div className="flex space-x-4">
-          {tabs.map(tab => (
+          {tabs.map((tab) => (
             <button
               key={tab}
               type="button"
@@ -63,7 +90,9 @@ export default function Spending() {
               [Chart Placeholder]
             </div>
             <div className="mt-4 flex justify-end text-gray-600">
-              <label htmlFor="compare" className="sr-only">Compare month</label>
+              <label htmlFor="compare" className="sr-only">
+                Compare month
+              </label>
               <select id="compare" aria-label="Compare month" className="border rounded-md p-1">
                 <option>April</option>
                 <option>March</option>
@@ -102,29 +131,76 @@ export default function Spending() {
               </div>
             </Card>
             <Card>
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex justify-between items-center mb-2 space-x-4">
                 <p className="text-sm uppercase text-gray-500">Category Breakdown</p>
-                <button aria-label="View categories" className="text-gray-400 hover:text-gray-600">
-                  ›
+                <button
+                  onClick={() => {
+                    setActiveTab('Breakdown');
+                    setBreakdownView('expenses');
+                  }}
+                  className={
+                    breakdownView === 'expenses'
+                      ? 'border-b-2 border-blue-600 text-blue-600'
+                      : 'text-gray-500 hover:text-blue-600'
+                  }
+                >
+                  Expenses
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab('Breakdown');
+                    setBreakdownView('budget');
+                  }}
+                  className={
+                    breakdownView === 'budget'
+                      ? 'border-b-2 border-blue-600 text-blue-600'
+                      : 'text-gray-500 hover:text-blue-600'
+                  }
+                >
+                  Budget
                 </button>
               </div>
-              <p className="text-2xl font-bold mb-4">$2,999</p>
-              <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-                [Pie Chart Placeholder]
-              </div>
-              <ul className="mt-4 space-y-2 text-gray-700">
-                {[
-                  'Auto & transport',
-                  'Household',
-                  'Drinks & dining',
-                  'Travel & vacation',
-                  'Childcare & education',
-                ].map(item => (
-                  <li key={item} className="flex justify-between">
-                    <span>{item}</span><span>$250</span>
-                  </li>
-                ))}
-              </ul>
+              <p className="text-2xl font-bold mb-4">
+                {breakdownView === 'expenses'
+                  ? `$${expensesByCategory.reduce((sum, c) => sum + c.value, 0)}`
+                  : ''}
+              </p>
+
+              {breakdownView === 'expenses' ? (
+                <div className="h-48">
+                  <MyPieChart data={expensesByCategory} />
+                </div>
+              ) : (
+                <div className="overflow-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th className="text-right">Budget</th>
+                        <th className="text-right">Spent</th>
+                        <th className="text-right">Remaining</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {budgetData.map((cat) => (
+                        <tr key={cat.id} className={cat.remaining < 0 ? 'bg-red-50' : ''}>
+                          <td>{cat.name}</td>
+                          <td className="text-right">{cat.planned}</td>
+                          <td className="text-right">{cat.spent}</td>
+                          <td
+                            className={`text-right ${
+                              cat.remaining < 0 ? 'text-red-600' : 'text-green-600'
+                            }`}
+                          >
+                            {cat.remaining}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
               <button className="mt-4 w-full border rounded-full py-2 text-gray-600 hover:bg-gray-50">
                 See All
               </button>
@@ -174,11 +250,11 @@ export default function Spending() {
       <Card className="mt-8">
         <p className="text-sm uppercase text-gray-500 mb-2">Page Placeholders</p>
         <ul className="list-disc list-inside text-gray-700">
-          {['Portfolio', 'Invest', 'Advice', 'Estate Planning', 'Equity', 'Tax'].map(page => (
+          {['Portfolio', 'Invest', 'Advice', 'Estate Planning', 'Equity', 'Tax'].map((page) => (
             <li key={page}>{page} page under development</li>
           ))}
         </ul>
       </Card>
     </Layout>
-  )
+  );
 }

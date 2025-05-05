@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 /* Add custom global styles or component overrides here */
-html, body, #__next {
-    height: 100%;
-    overflow: auto;
-  }
+html,
+body,
+#__next {
+  height: 100%;
+  overflow: auto;
+}

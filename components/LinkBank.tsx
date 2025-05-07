@@ -1,4 +1,3 @@
-// components/LinkBank.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,7 +8,7 @@ import { supabase } from '../lib/supabaseClient';
 export default function LinkBank({ userId }: { userId: string }) {
   const [linkToken, setLinkToken] = useState<string | null>(null);
 
-  // ─── fetch link token ─────────────────────────────────────────────────────────
+  // 1) fetch a link token
   useEffect(() => {
     axios
       .post('/api/create_link_token', { userId })
@@ -17,20 +16,22 @@ export default function LinkBank({ userId }: { userId: string }) {
       .catch(console.error);
   }, [userId]);
 
+  // 2) initialize Plaid Link
   const { open, ready } = usePlaidLink({
     token: linkToken ?? '',
     onSuccess: async (public_token) => {
+      // 3) exchange for access_token
       await axios.post('/api/exchange_public_token', { public_token, userId });
-      // you can now fetch transactions…
+      // now you can call your /api/fetch_transactions, etc.
+      alert('Bank linked!');
     },
   });
 
   return (
     <button
       onClick={() => open()}
-      disabled={!ready || !linkToken}
+      disabled={!ready}
       className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-      title="Link a bank account via Plaid"
     >
       Link Bank Account
     </button>

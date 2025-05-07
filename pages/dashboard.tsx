@@ -9,28 +9,41 @@ import MyPieChart from '../components/charts/PieChart';
 import MyBarChart from '../components/charts/BarChart';
 import Sparkline from '../components/charts/SparkLine';
 import LinkBank from '../components/LinkBank';
+import logger from '../lib/logger';
 import Papa from 'papaparse';
 
 export default function Dashboard() {
   const router = useRouter();
+  logger.debug('Rendering Dashboard');
 
   // ─── Hooks ────────────────────────────────────────────────────────────────
   const [user, setUser] = useState<any>(null);
   const [netView, setNetView] = useState<'assets' | 'liabilities'>('assets');
-
-  // dropdown & CSV state
   const [menuOpen, setMenuOpen] = useState(false);
   const [importing, setImporting] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
-        router.replace('/');
-      } else {
-        setUser(data.session.user);
-      }
-    });
+    logger.debug('Fetching session');
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!data.session) {
+          logger.info('No session found, redirecting to login');
+          router.replace('/');
+        } else {
+          const u = data.session.user;
+          setUser(u);
+          logger.info({ userId: u.id }, 'User session loaded');
+        }
+      })
+      .catch((err) => {
+        logger.error({ err }, 'Error fetching session');
+      });
   }, [router]);
+
+  useEffect(() => {
+    logger.info({ netView }, 'Net view changed');
+  }, [netView]);
 
   if (!user) return null;
 
@@ -79,9 +92,10 @@ export default function Dashboard() {
     },
   ];
 
-  // ─── handle one‑step CSV import ────────────────────────────────────────────
+  // ─── handle one-step CSV import ────────────────────────────────────────────
   const handleCsvFile = (file: File | null) => {
     if (!file) return;
+    logger.info('CSV import started');
     setImporting(true);
     Papa.parse(file, {
       header: true,
@@ -94,11 +108,18 @@ export default function Dashboard() {
           name: row.Description,
           category: row.Category || 'Imported',
         }));
-        await fetch('/api/import_csv', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, transactions: txs }),
-        });
+        logger.info({ count: txs.length }, 'Parsed CSV transactions');
+        try {
+          const resp = await fetch('/api/import_csv', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id, transactions: txs }),
+          });
+          if (!resp.ok) throw new Error(`Status ${resp.status}`);
+          logger.info('CSV transactions uploaded successfully');
+        } catch (err: any) {
+          logger.error({ err }, 'Error uploading CSV transactions');
+        }
         setImporting(false);
         setMenuOpen(false);
       },
@@ -121,13 +142,19 @@ export default function Dashboard() {
             <p className="text-sm uppercase text-gray-500">Net Worth</p>
             <p className="text-3xl font-bold">$80,626</p>
           </div>
-          {/* + button with one‑step CSV & Plaid */}
+          {/* + button with one-step CSV & Plaid */}
           <div className="relative">
             <button
               type="button"
               className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
               aria-label={isAssets ? 'Add asset' : 'Add liability'}
-              onClick={() => setMenuOpen((o) => !o)}
+              onClick={() =>
+                setMenuOpen((o) => {
+                  const newState = !o;
+                  logger.info({ menuOpen: newState }, 'Menu toggled');
+                  return newState;
+                })
+              }
             >
               <FaPlus />
             </button>
@@ -158,7 +185,9 @@ export default function Dashboard() {
         {/* Toggle */}
         <div className="border-b border-gray-200 mb-4">
           <button
-            onClick={() => setNetView('assets')}
+            onClick={() => {
+              setNetView('assets');
+            }}
             className={`mr-4 pb-2 ${
               isAssets
                 ? 'border-b-2 border-blue-600 text-blue-600'
@@ -168,7 +197,9 @@ export default function Dashboard() {
             Assets
           </button>
           <button
-            onClick={() => setNetView('liabilities')}
+            onClick={() => {
+              setNetView('liabilities');
+            }}
             className={`pb-2 ${
               !isAssets
                 ? 'border-b-2 border-blue-600 text-blue-600'
@@ -211,7 +242,10 @@ export default function Dashboard() {
             <p className="text-sm uppercase text-gray-500">Favorites</p>
             <button
               type="button"
-              onClick={() => router.push('/favorites')}
+              onClick={() => {
+                logger.info('Navigating to /favorites');
+                router.push('/favorites');
+              }}
               className="text-sm text-blue-600 hover:underline"
               aria-label="Edit favorites"
             >
@@ -225,7 +259,15 @@ export default function Dashboard() {
               <div className="h-24">
                 <MyBarChart data={netCashFlowData} />
               </div>
-              <button className="mt-2 text-sm text-blue-600 hover:underline">See More</button>
+              <button
+                onClick={() => {
+                  logger.info('Clicked See More on Net Cash Flow');
+                  router.push('/cash-flow');
+                }}
+                className="mt-2 text-sm text-blue-600 hover:underline"
+              >
+                See More
+              </button>
             </div>
             <div>
               <p className="text-sm text-gray-500">Holdings</p>
@@ -264,7 +306,10 @@ export default function Dashboard() {
             [Chart]
           </div>
           <button
-            onClick={() => router.push('/spending')}
+            onClick={() => {
+              logger.info('Navigating to /spending');
+              router.push('/spending');
+            }}
             className="mt-4 w-full border rounded-full py-2 text-gray-600 hover:bg-gray-50"
           >
             View Spending
@@ -276,8 +321,11 @@ export default function Dashboard() {
             <button
               type="button"
               aria-label="View investment details"
+              onClick={() => {
+                logger.info('Navigating to /portfolio');
+                router.push('/portfolio');
+              }}
               className="text-gray-400"
-              onClick={() => router.push('/portfolio')}
             >
               ›
             </button>
